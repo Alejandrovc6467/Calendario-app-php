@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Seguimiento</title>
+    <link rel="stylesheet" href="styles.css?96">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarina&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h1>AVC Calendar</h1>
+            
+            <div class="stats-container" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-label">Total del Año</div>
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-subtitle">veces</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Días Activos</div>
+                    <div class="stat-value" id="statActiveDays">0</div>
+                    <div class="stat-subtitle">días registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Promedio Mensual</div>
+                    <div class="stat-value" id="statAverage">0</div>
+                    <div class="stat-subtitle">veces/mes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Mes con más actividad</div>
+                    <div class="stat-value" id="statTopMonth">-</div>
+                    <div class="stat-subtitle" id="statTopMonthCount">0 veces</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Días sin Actividad</div>
+                    <div class="stat-value" id="statStreak">0</div>
+                    <div class="stat-subtitle">desde última actividad</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div id="status" class="status"></div>
+
+            <div class="header-controls">
+                <div class="year-selector">
+                    <button onclick="changeYear(-1)">◄</button>
+                    <span id="currentYear"></span>
+                    <button onclick="changeYear(1)">►</button>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #1a1a1a;"></div>
+                        <span>0 veces</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffa500;"></div>
+                        <span>1 vez</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff4444;"></div>
+                        <span>2 veces</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #cc0000;"></div>
+                        <span>3+ veces</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navegación de meses para móvil -->
+            <div class="mobile-month-navigation">
+                <button onclick="changeMobileMonth(-1)">◄</button>
+                <span id="currentMobileMonth"></span>
+                <button onclick="changeMobileMonth(1)">►</button>
+            </div>
+
+            <div id="loadingMsg" class="loading">Cargando datos...</div>
+            <div class="calendar-grid" id="calendar" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalHeader">Registrar actividad</div>
+            <div class="modal-body">
+                <label for="cantidadVeces">¿Cuántas veces realizaste la acción?</label>
+                <input type="number" id="cantidadVeces" min="0" value="0">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-delete" onclick="deleteEntry()">Eliminar</button>
+                <button class="btn-save" onclick="saveEntry()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+   <script src="script.js?18"></script>
+</body>
+</html>
