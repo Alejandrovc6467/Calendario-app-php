@@ -4,18 +4,8 @@ let currentEditingDate = null;
 let currentMobileMonth = 0; // Para navegación móvil
 
 const monthNames = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];
 
 const dayNames = ["D", "L", "M", "X", "J", "V", "S"];
@@ -35,7 +25,6 @@ async function init() {
       if (e.key === "Enter") saveEntry();
     });
 
-  // Detectar cambios de tamaño de ventana
   window.addEventListener('resize', function() {
     updateMobileView();
   });
@@ -48,18 +37,14 @@ function updateMobileView() {
   if (isMobile) {
     showMobileMonth(currentMobileMonth);
   } else {
-    // En desktop, mostrar todos los meses
     const months = document.querySelectorAll('.month');
-    months.forEach(month => {
-      month.classList.remove('active-mobile');
-    });
+    months.forEach(month => month.classList.remove('active-mobile'));
   }
 }
 
 function changeMobileMonth(delta) {
   currentMobileMonth += delta;
-  
-  // Ajustar límites
+
   if (currentMobileMonth < 0) {
     currentMobileMonth = 11;
     changeYear(-1);
@@ -70,7 +55,7 @@ function changeMobileMonth(delta) {
     changeYear(1);
     return;
   }
-  
+
   showMobileMonth(currentMobileMonth);
 }
 
@@ -83,8 +68,7 @@ function showMobileMonth(monthIndex) {
       month.classList.remove('active-mobile');
     }
   });
-  
-  // Actualizar el texto del mes actual
+
   document.getElementById('currentMobileMonth').textContent = monthNames[monthIndex];
 }
 
@@ -100,7 +84,6 @@ function showStatus(message, isError = false) {
 
 async function loadData() {
   try {
-    // Ruta absoluta desde la raíz del proyecto
     const response = await fetch("../api/datos.php");
     if (!response.ok) throw new Error("Error al cargar datos");
     markedDays = await response.json();
@@ -117,17 +100,14 @@ async function loadData() {
 
 async function saveData() {
   try {
-    // Ruta absoluta desde la raíz del proyecto
     const response = await fetch("../api/datos.php", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(markedDays),
     });
 
     if (!response.ok) throw new Error("Error al guardar");
-    const result = await response.json();
+    await response.json();
     showStatus("✓ Guardado automáticamente");
   } catch (error) {
     console.error("Error al guardar:", error);
@@ -146,9 +126,7 @@ function calculateMonthTotal(month) {
   let total = 0;
   for (let day = 1; day <= 31; day++) {
     const dateKey = `${currentYear}-${month}-${day}`;
-    if (markedDays[dateKey]) {
-      total += markedDays[dateKey];
-    }
+    if (markedDays[dateKey]) total += markedDays[dateKey];
   }
   return total;
 }
@@ -157,9 +135,7 @@ function calculateMonthActiveDays(month) {
   let activeDays = 0;
   for (let day = 1; day <= 31; day++) {
     const dateKey = `${currentYear}-${month}-${day}`;
-    if (markedDays[dateKey] && markedDays[dateKey] > 0) {
-      activeDays++;
-    }
+    if (markedDays[dateKey] && markedDays[dateKey] > 0) activeDays++;
   }
   return activeDays;
 }
@@ -214,7 +190,6 @@ function calculateDaysWithoutActivity() {
       const [year, month, day] = dateKey.split("-").map(Number);
       const activityDate = new Date(year, month, day);
       activityDate.setHours(0, 0, 0, 0);
-
       if (activityDate <= today) {
         if (!lastActivityDate || activityDate > lastActivityDate) {
           lastActivityDate = activityDate;
@@ -223,13 +198,10 @@ function calculateDaysWithoutActivity() {
     }
   }
 
-  if (!lastActivityDate) {
-    return 0;
-  }
+  if (!lastActivityDate) return 0;
 
   const diffTime = today.getTime() - lastActivityDate.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
   return diffDays;
 }
 
@@ -242,6 +214,11 @@ function renderCalendar() {
   document.getElementById("currentYear").textContent = currentYear;
   const calendar = document.getElementById("calendar");
   calendar.innerHTML = "";
+
+  const today = new Date();
+  const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
 
   for (let month = 0; month < 12; month++) {
     const monthDiv = document.createElement("div");
@@ -271,7 +248,6 @@ function renderCalendar() {
 
     monthStatsDiv.appendChild(monthCount);
     monthStatsDiv.appendChild(monthActiveDays);
-
     monthHeader.appendChild(monthNameDiv);
     monthHeader.appendChild(monthStatsDiv);
     monthDiv.appendChild(monthHeader);
@@ -314,6 +290,14 @@ function renderCalendar() {
         dayDiv.style.color = "white";
       }
 
+      if (day === todayDate && month === todayMonth && currentYear === todayYear) {
+        dayDiv.classList.add("today");
+        console.log('Si entro');
+        console.log(todayDate);
+        console.log(todayMonth);
+        console.log(todayYear);
+      }
+
       dayDiv.onclick = () => openModal(dateKey, count);
       daysDiv.appendChild(dayDiv);
     }
@@ -329,9 +313,7 @@ function renderCalendar() {
 function openModal(dateKey, currentCount) {
   currentEditingDate = dateKey;
   const [year, month, day] = dateKey.split("-");
-  document.getElementById("modalHeader").textContent = `${day} de ${
-    monthNames[parseInt(month)]
-  } ${year}`;
+  document.getElementById("modalHeader").textContent = `${day} de ${monthNames[parseInt(month)]} ${year}`;
   document.getElementById("cantidadVeces").value = currentCount;
   document.getElementById("modal").classList.add("active");
   document.getElementById("cantidadVeces").focus();
@@ -345,13 +327,11 @@ function closeModal() {
 
 async function saveEntry() {
   const count = parseInt(document.getElementById("cantidadVeces").value) || 0;
-
   if (count === 0) {
     delete markedDays[currentEditingDate];
   } else {
     markedDays[currentEditingDate] = count;
   }
-
   await saveData();
   renderCalendar();
   closeModal();
